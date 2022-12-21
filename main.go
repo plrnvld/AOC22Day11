@@ -10,6 +10,7 @@ import (
 type OperationFunc func(old int) int
 type TestFunc func(val int) bool
 
+/*
 var m0 = Monkey{
 	Num:       0,
 	Items:     []int{79, 98},
@@ -49,8 +50,91 @@ var m3 = Monkey{
 	FalseDest: 1,
     Inspect: 0,
 }
+*/
 
-var monkeys = []*Monkey{&m0, &m1, &m2, &m3}
+var modProd = 2 * 3 * 5 *7 * 11 * 13 * 17 * 19
+
+var m0 = Monkey{
+	Num:       0,
+	Items:     []int{57},
+	Operation: func(old int) int { return old * 13 },
+	Test:      func(val int) bool { return val%11 == 0 },
+	TrueDest:  3,
+	FalseDest: 2,
+    Inspect: 0,
+}
+
+var m1 = Monkey{
+	Num:       1,
+	Items:     []int{58, 93, 88, 81, 72, 73, 65},
+	Operation: func(old int) int { return old + 2 },
+	Test:      func(val int) bool { return val%7 == 0 },
+	TrueDest:  6,
+	FalseDest: 7,
+    Inspect: 0,
+}
+
+var m2 = Monkey{
+	Num:       2,
+	Items:     []int{65, 95},
+	Operation: func(old int) int { return old + 6 },
+	Test:      func(val int) bool { return val%13 == 0 },
+	TrueDest:  3,
+	FalseDest: 5,
+    Inspect: 0,
+}
+
+var m3 = Monkey{
+	Num:       3,
+	Items:     []int{58, 80, 81, 83},
+	Operation: func(old int) int { return old * old },
+	Test:      func(val int) bool { return val%5 == 0 },
+	TrueDest:  4,
+	FalseDest: 5,
+    Inspect: 0,
+}
+
+var m4 = Monkey{
+	Num:       4,
+	Items:     []int{58, 89, 90, 96, 55},
+	Operation: func(old int) int { return old + 3 },
+	Test:      func(val int) bool { return val%3 == 0 },
+	TrueDest:  1,
+	FalseDest: 7,
+    Inspect: 0,
+}
+
+var m5 = Monkey{
+	Num:       5,
+	Items:     []int{66, 73, 87, 58, 62, 67},
+	Operation: func(old int) int { return old * 7 },
+	Test:      func(val int) bool { return val%17 == 0 },
+	TrueDest:  4,
+	FalseDest: 1,
+    Inspect: 0,
+}
+
+var m6 = Monkey{
+	Num:       6,
+	Items:     []int{85, 55, 89},
+	Operation: func(old int) int { return old + 4 },
+	Test:      func(val int) bool { return val%2 == 0 },
+	TrueDest:  2,
+	FalseDest: 0,
+    Inspect: 0,
+}
+
+var m7 = Monkey{
+	Num:       7,
+	Items:     []int{73, 80, 54, 94, 90, 52, 69, 58},
+	Operation: func(old int) int { return old + 7 },
+	Test:      func(val int) bool { return val%19 == 0 },
+	TrueDest:  6,
+	FalseDest: 0,
+    Inspect: 0,
+}
+
+var monkeys = []*Monkey{&m0, &m1, &m2, &m3, &m4, &m5, &m6, &m7 }
 
 type Monkey struct {
 	Num       int
@@ -67,7 +151,7 @@ func Send(val int, to Monkey) {
 }
 
 func WorryLevel(from *Monkey, val int) int {
-	return from.Operation(val) / 3
+	return from.Operation(val) % modProd
 }
 
 func TestIt(from *Monkey, worryLevel int) bool {
@@ -97,7 +181,15 @@ func NumToMonkey(num int) (*Monkey, error) {
 		return &m2, nil
 	} else if num == 3 {
 		return &m3, nil
-	} else {
+	} else if num == 4 {
+		return &m4, nil
+	} else if num == 5 {
+		return &m5, nil
+	} else if num == 6 {
+		return &m6, nil
+	} else if num == 7 {
+		return &m7, nil
+	}else {
 		return &Monkey{}, errors.New(fmt.Sprintf("No monkey found with number %d", num))
 	}
 }
@@ -120,11 +212,11 @@ func runOneRound() {
 		for _, item := range m.Items {
 			level := WorryLevel(m, item)
 			dest := Destination(m, level)
-			fmt.Printf("> Sending item %d with level %d from m%d to m%d\n", item, level, m.Num, dest.Num)
+			// fmt.Printf("> Sending item %d with level %d from m%d to m%d\n", item, level, m.Num, dest.Num)
 			dest.AddItem(level)
             m.Inspect = m.Inspect + 1
 
-			fmt.Printf(">>> Monkey %d now has %v\n\n", dest.Num, dest.Items)
+			// fmt.Printf(">>> Monkey %d now has %v\n\n", dest.Num, dest.Items)
 		}
 
 		m.Items = m.Items[:0]
@@ -162,12 +254,13 @@ func main() {
 
 	printItems()
 
-	for i := 0; i < 20; i++ {
-        fmt.Printf("\n=== Round %d ===\n\n", i+1)
+	for i := 0; i < 10000; i++ {
+        // fmt.Printf("\n=== Round %d ===\n\n", i+1)
 		runOneRound()
 
-		printItems()
+		// printItems()
 	}
 
+    printItems()
     printInspect()
 }
